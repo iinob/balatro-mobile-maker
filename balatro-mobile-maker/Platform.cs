@@ -132,6 +132,22 @@ internal class Platform
         return ".";
     }
 
+    public static string getModLocation()
+    {
+        if (isWindows)
+            return Environment.GetEnvironmentVariable("AppData") + "\\BalatroBACKUP\\Mods";
+
+        //TODO: Test Linux location
+        if (isLinux)
+            return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.local/share/Steam/steamapps/compatdata/2379780/pfx/drive_c/users/steamuser/AppData/Roaming/BalatroBACKUP/Mods";
+
+        //TODO: Implement
+        if (isOSX)
+            return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/Library/Application Support/Balatro"; // unchanged, I don't know anything about OSX filestructure and I'd probably break smth
+
+        return ".";
+    }
+
     //Checks whether the game already exists in the directory
     //If it does not exist, it attempts to grab it from the default location
     //If it does already exist, this returns true

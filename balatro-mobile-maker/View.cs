@@ -33,6 +33,9 @@ internal class View
         _cleaup = AskQuestion("Would you like to automatically clean up once complete?");
         _verboseMode = AskQuestion("Would you like to enable extra logging information?");
 
+        //Checks if the game executable was already present in the directory
+        gameProvided = Platform.gameExists();
+
         //If balatro.apk or balatro.ipa already exists, ask before beginning build process again
         if (!(fileExists("balatro.apk") || fileExists("balatro.ipa")) || AskQuestion("A previous build was found... Would you like to build again?"))
         {
@@ -86,8 +89,6 @@ internal class View
 
                 #region Prepare workspace
                 #region Find and extract Balatro.exe
-
-                gameProvided = Platform.gameExists();
 
                 if (gameProvided)
                     Log("Game found!");
@@ -308,8 +309,11 @@ internal class View
                         System.IO.Directory.CreateDirectory(Platform.getGameSaveLocation() + "BACKUP/");
                     //TODO: No xcopy
                     RunCommand("xcopy", "\"" + Platform.getGameSaveLocation() + "\" \"" + Platform.getGameSaveLocation() + "BACKUP\\\" /E /H /Y /V");
+                    
                     tryDelete(Platform.getGameSaveLocation());
                     System.IO.Directory.CreateDirectory(Platform.getGameSaveLocation());
+                    
+                    
 
                     Log("Attempting to pull save files from Android device.");
 
@@ -342,6 +346,10 @@ internal class View
                     useTool(ProcessTools.ADB, "shell \"run-as com.unofficial.balatro cat files/save/game/3/save.jkr > /data/local/tmp/balatro/files/3/save.jkr\"");
                     useTool(ProcessTools.ADB, "shell find /data/local/tmp/balatro/files/ -maxdepth 2 -size 0c -exec rm '{}' \\;");
                     useTool(ProcessTools.ADB, "pull /data/local/tmp/balatro/files/. \"" + Platform.getGameSaveLocation() + "\"");
+
+                    Log("Restoring mods folder...");
+                    System.IO.Directory.CreateDirectory(Platform.getGameSaveLocation() + "\\Mods");
+                    RunCommand("xcopy", Platform.getModLocation() + " " + Platform.getGameSaveLocation() + "\\Mods" + " /E /H /Y /V"); // iinob: I know it says no xcopy up there, but I don't use dotnet very often and idk any other way to do it
 
                     useTool(ProcessTools.ADB, "kill-server");
                 }
