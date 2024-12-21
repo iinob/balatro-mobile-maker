@@ -1,4 +1,6 @@
 /balatro-mobile-maker/obj
 /balatro-mobile-maker/bin
 /balatro-mobile-maker/publish
+/balatro-mobile-maker/Properties
+*.csproj
 /.vs
