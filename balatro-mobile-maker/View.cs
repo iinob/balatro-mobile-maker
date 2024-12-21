@@ -305,6 +305,7 @@ internal class View
                     PrepareAndroidPlatformTools();
 
                     Log("Backing up your files...");
+
                     if (!directoryExists(Platform.getGameSaveLocation() + "BACKUP"))
                         System.IO.Directory.CreateDirectory(Platform.getGameSaveLocation() + "BACKUP/");
                     //TODO: No xcopy
@@ -347,9 +348,11 @@ internal class View
                     useTool(ProcessTools.ADB, "shell find /data/local/tmp/balatro/files/ -maxdepth 2 -size 0c -exec rm '{}' \\;");
                     useTool(ProcessTools.ADB, "pull /data/local/tmp/balatro/files/. \"" + Platform.getGameSaveLocation() + "\"");
 
-                    Log("Restoring mods folder...");
-                    System.IO.Directory.CreateDirectory(Platform.getGameSaveLocation() + "\\Mods");
-                    RunCommand("xcopy", Platform.getModLocation() + " " + Platform.getGameSaveLocation() + "\\Mods" + " /E /H /Y /V"); // iinob: I know it says no xcopy up there, but I don't use dotnet very often and idk any other way to do it
+                    if (directoryExists(Platform.getModLocation())) { // only want this to run if the mods folder exists in the first place
+                        Log("Restoring mods folder...");
+                        System.IO.Directory.CreateDirectory(Platform.getGameSaveLocation() + "\\Mods");
+                        RunCommand("xcopy", Platform.getModLocation() + " " + Platform.getGameSaveLocation() + "\\Mods" + " /E /H /Y /V"); // iinob: I know it says no xcopy up there, but I don't use dotnet very often and idk any other way to do it
+                    }
 
                     useTool(ProcessTools.ADB, "kill-server");
                 }
